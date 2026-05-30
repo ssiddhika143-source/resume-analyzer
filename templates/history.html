@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>History — ResumeAI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0a0a0a; --surface: #111111; --surface2: #1a1a1a;
+      --gold: #f5c518; --gold-light: #ffd700; --gold-muted: rgba(245,197,24,0.10);
+      --text: #ffffff; --muted: #888888; --border: #2a2a2a;
+      --green: #22c55e; --red: #ef4444; --yellow: #f59e0b;
+    }
+    [data-theme="light"] {
+      --bg: #fafaf7; --surface: #ffffff; --surface2: #f3f3ee;
+      --gold: #d4a017; --gold-light: #e6b800; --gold-muted: rgba(212,160,23,0.10);
+      --text: #0a0a0a; --muted: #666666; --border: #e0e0d8;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; min-height: 100vh; animation: fadeIn 0.5s ease both; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* BACKGROUND IMAGE */
+    .page-bg {
+      position: fixed; inset: 0;
+      background:
+        linear-gradient(rgba(10,10,10,0.91), rgba(10,10,10,0.94)),
+        url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80') center/cover no-repeat;
+      z-index: -1;
+    }
+    [data-theme="light"] .page-bg {
+      background:
+        linear-gradient(rgba(250,250,247,0.94), rgba(250,250,247,0.97)),
+        url('https://images.unsplash.com/photo-1497366216548-37526070297c?w=1920&q=80') center/cover no-repeat;
+    }
+
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 20px 48px; border-bottom: 1px solid var(--border); position: relative; z-index: 1; }
+    .logo { font-size: 22px; font-weight: 700; } .logo span { color: var(--gold); }
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .back { color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+    .back:hover { color: var(--gold); }
+    .theme-toggle { width: 44px; height: 24px; background: var(--surface2); border: 1px solid var(--border); border-radius: 100px; cursor: pointer; position: relative; }
+    .theme-toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; background: var(--gold); border-radius: 50%; transition: transform 0.3s; }
+    [data-theme="light"] .theme-toggle::after { transform: translateX(20px); }
+    .toggle-label { font-size: 13px; color: var(--muted); }
+
+    .container { max-width: 860px; margin: 0 auto; padding: 48px 24px 80px; position: relative; z-index: 1; }
+    .page-title { margin-bottom: 32px; }
+    .page-title h2 { font-size: 2.2rem; font-weight: 700; letter-spacing: -1px; }
+    .page-title h2 span { color: var(--gold); }
+    .page-title p { color: var(--muted); font-size: 14px; margin-top: 8px; }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; position: relative; }
+    .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); opacity: 0.5; }
+    .table-header { display: grid; grid-template-columns: 60px 1fr 130px 180px; padding: 16px 28px; border-bottom: 1px solid var(--border); }
+    .table-header span { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+    .table-row { display: grid; grid-template-columns: 60px 1fr 130px 180px; padding: 18px 28px; border-bottom: 1px solid var(--border); align-items: center; transition: background 0.2s; }
+    .table-row:last-child { border-bottom: none; }
+    .table-row:hover { background: rgba(245,197,24,0.03); }
+    .id-col { color: var(--muted); font-size: 13px; font-weight: 600; }
+    .name-col { font-size: 14px; font-weight: 500; color: var(--muted); }
+    .score-badge { display: inline-flex; align-items: center; padding: 5px 14px; border-radius: 100px; font-size: 13px; font-weight: 700; }
+    .badge-high { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.25); color: var(--green); }
+    .badge-mid { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25); color: var(--yellow); }
+    .badge-low { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); color: var(--red); }
+    .date-col { color: var(--muted); font-size: 12px; }
+    .empty { padding: 80px 28px; text-align: center; color: var(--muted); font-size: 14px; }
+    .empty-icon { font-size: 48px; margin-bottom: 16px; }
+
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; margin-top: 28px; padding: 14px 28px; background: var(--gold); border-radius: 12px; color: #000; text-decoration: none; font-size: 14px; font-weight: 700; transition: all 0.25s; }
+    .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(245,197,24,0.3); }
+
+    footer { border-top: 1px solid var(--border); padding: 32px 48px; display: flex; align-items: center; justify-content: space-between; margin-top: 48px; }
+    .footer-left { font-size: 13px; color: var(--muted); } .footer-left span { color: var(--gold); font-weight: 600; }
+    .footer-right a { color: var(--muted); text-decoration: none; font-size: 13px; border: 1px solid var(--border); padding: 7px 16px; border-radius: 8px; transition: all 0.2s; }
+    .footer-right a:hover { border-color: var(--gold); color: var(--gold); }
+  </style>
+</head>
+<body>
+<div class="page-bg"></div>
+
+<nav>
+  <div class="logo">Resume<span>AI</span></div>
+  <div class="nav-right">
+    <span class="toggle-label" id="themeLabel">🌙</span>
+    <div class="theme-toggle" id="themeToggle"></div>
+    <a href="/" class="back">← Back to Analyzer</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-title">
+    <h2>Analysis <span>History</span></h2>
+    <p>All your past resume analyses in one place.</p>
+  </div>
+
+  <div class="card">
+    {% if rows %}
+    <div class="table-header">
+      <span>#</span><span>Analysis</span><span>Score</span><span>Date</span>
+    </div>
+    {% for row in rows %}
+    <div class="table-row">
+      <span class="id-col">#{{ row.id }}</span>
+      <span class="name-col">Resume Analysis {{ row.id }}</span>
+      <span>
+        <span class="score-badge {% if row.score >= 70 %}badge-high{% elif row.score >= 40 %}badge-mid{% else %}badge-low{% endif %}">
+          {{ row.score }}/100
+        </span>
+      </span>
+      <span class="date-col">{{ row.created_at }}</span>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="empty">
+      <div class="empty-icon">📭</div>
+      <p>No analyses yet. Upload your first resume to get started.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <a href="/" class="btn-primary">⚡ Analyze a Resume</a>
+</div>
+
+<footer>
+  <div class="footer-left">Built by <span>Siddhika Shinde</span> · ResumeAI 2026</div>
+  <div class="footer-right"><a href="https://github.com/ssiddhika143-source" target="_blank">⭐ GitHub</a></div>
+</footer>
+
+<script>
+  const html = document.documentElement;
+  const toggle = document.getElementById('themeToggle');
+  const label = document.getElementById('themeLabel');
+  const saved = localStorage.getItem('theme') || 'dark';
+  html.setAttribute('data-theme', saved);
+  label.textContent = saved === 'dark' ? '🌙' : '☀️';
+  toggle.addEventListener('click', () => {
+    const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    html.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    label.textContent = next === 'dark' ? '🌙' : '☀️';
+  });
+</script>
+</body>
+</html>

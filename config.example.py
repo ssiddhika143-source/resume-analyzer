@@ -1,0 +1,5 @@
+﻿GROQ_API_KEY = 'your_groq_api_key_here'
+DB_HOST = 'localhost'
+DB_USER = 'root'
+DB_PASSWORD = 'your_mysql_password'
+DB_NAME = 'resume_analyzer'
