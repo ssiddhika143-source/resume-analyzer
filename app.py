@@ -4,7 +4,7 @@ import pymysql
 from groq import Groq
 import json
 import os
-fimport os
+import os
 try:
     from config import GROQ_API_KEY, DB_HOST, DB_USER, DB_PASSWORD, DB_NAME
 except ImportError:
