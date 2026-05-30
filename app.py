@@ -4,7 +4,15 @@ import pymysql
 from groq import Groq
 import json
 import os
-from config import GROQ_API_KEY, DB_HOST, DB_USER, DB_PASSWORD, DB_NAME
+fimport os
+try:
+    from config import GROQ_API_KEY, DB_HOST, DB_USER, DB_PASSWORD, DB_NAME
+except ImportError:
+    GROQ_API_KEY = os.environ.get('GROQ_API_KEY')
+    DB_HOST = os.environ.get('DB_HOST')
+    DB_USER = os.environ.get('DB_USER')
+    DB_PASSWORD = os.environ.get('DB_PASSWORD')
+    DB_NAME = os.environ.get('DB_NAME')
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
